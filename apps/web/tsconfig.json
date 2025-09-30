@@ -5,7 +5,13 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "module": "esnext",
+    "paths": {
+      "~/app/*": ["./app/*"],
+      "~/features/*": ["./features/*"],
+      "~/shared/*": ["./shared/*"],
+    }
   },
   "include": [
     "**/*.ts",

@@ -2,16 +2,19 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["build:styles", "build:components"]
+      "dependsOn": ["build:styles", "copy:assets", "build:components"]
     },
     "build:styles": {
       "outputs": ["dist/**"]
     },
+    "copy:assets": {
+      "outputs": ["dist/assets/**"]
+    },
     "build:components": {
-      "outputs": ["dist/**"]
+      "outputs": ["dist/components/**"]
     },
     "dev": {
-      "with": ["dev:styles", "dev:components"]
+      "with": ["dev:styles", "copy:assets", "dev:components"]
     },
     "dev:styles": {
       "cache": false,
