@@ -27,8 +27,5 @@
       "cache": false,
       "persistent": true
     }
-  },
-  "env": [
-    "VITE_APP_API_URL"
-  ]
+  }
 }
