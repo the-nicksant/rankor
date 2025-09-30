@@ -2,7 +2,10 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["build:styles", "copy:assets", "build:components"]
+      "dependsOn": ["build:styles", "copy:assets", "build:components"],
+      "env": [
+        "VITE_APP_API_URL"
+      ]
     },
     "build:styles": {
       "outputs": ["dist/**"]
@@ -24,5 +27,8 @@
       "cache": false,
       "persistent": true
     }
-  }
+  },
+  "env": [
+    "VITE_APP_API_URL"
+  ]
 }
