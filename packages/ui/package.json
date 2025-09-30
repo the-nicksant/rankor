@@ -21,7 +21,7 @@
     "check-types": "tsc --noEmit",
     "dev:styles": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
     "dev:components": "tsc --watch",
-    "copy:assets": "cp -R src/assets dist/assets",
+    "copy:assets": "node copy-assets.js",
     "lint": "eslint src --max-warnings 0"
   },
   "peerDependencies": {
