@@ -1,3 +1,5 @@
+"use client"
+
 import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 
@@ -43,7 +45,7 @@ function Input({
       <input
         type={type}
         data-slot="input"
-        className={inputVariants({ size, className}) + (icon ? ' pl-10' : '')}
+        className={inputVariants({ size, className}) + (icon ? ' pl-[2.5rem!important]' : '')}
         {...props}
         onChange={e => {
           e.target.value = formatter 

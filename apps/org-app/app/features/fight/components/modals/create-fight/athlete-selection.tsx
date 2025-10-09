@@ -1,10 +1,12 @@
-import { UserRoundSearch } from 'lucide-react'
+import { Search, UserRoundSearch } from 'lucide-react'
 import React from 'react'
 import { ExpBadges } from '~/components/shared/exp-badges'
 import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
 import { Skeleton } from '@repo/ui/skeleton'
 import { Experience } from '~/features/athlete/domain/experience'
 import { useAthletes } from '~/features/athlete/hooks/queries'
+import dayjs from 'dayjs'
+import { Input } from '@repo/ui/input'
 
 const mockedAthletes = [
   {
@@ -106,11 +108,11 @@ type Props = {
   onSelectAthlete: (fighter: any) => void
 }
 
-export const AthleteSelection = ({ selectedAthletes, onSelectAthlete }: Props) => {
+export const AthleteSelection = ({ fightConfig, selectedAthletes, onSelectAthlete }: Props) => {
 
   const { data: athletes, isLoading } = useAthletes({ skip: 0, take: 100 })
   
-  const isFighterSelected = (fighterId: number) => {
+  const isFighterSelected = (fighterId: string) => {
     if(selectedAthletes.a?.id === fighterId || selectedAthletes.b?.id === fighterId){
       return true
     }
@@ -119,54 +121,68 @@ export const AthleteSelection = ({ selectedAthletes, onSelectAthlete }: Props) =
   }
 
   return (
-    <ul>
-      
-      {
-        athletes?.data.map(fighter => (
-          <li
-            aria-disabled={isFighterSelected(fighter.id) ? 'true' : 'false'}
-            className="w-full hover:bg-sidebar-accent p-4 flex items-center justify-between group aria-disabled:pointer-events-none aria-disabled:opacity-40 cursor-pointer" 
-            onClick={() => !isFighterSelected(fighter.id) && onSelectAthlete(fighter)}
-          >
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex flex-col items-center relative">
-                <Avatar className="size-16">
-                  <AvatarFallback>{fighter.name[0]}</AvatarFallback>
-                  <AvatarImage src={fighter.avatar} />
-                </Avatar>
-                <ExpBadges  exp={fighter.exp as any} size={"sm"} className="z-1 mt-1 absolute left-[50%] -translate-x-[50%] -bottom-[15px]"/>
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm">{fighter.name}</span>
+    <div>
+      <header className='p-4 w-full'>
+        <Input 
+          placeholder='Buscar atleta inscrito'
+          icon={<Search />}
+        />
+      </header>
+      <ul>
+        
+        {
+          athletes?.data.map(fighter => (
+            <li
+              aria-disabled={isFighterSelected(fighter.id) ? 'true' : 'false'}
+              className="w-full hover:bg-sidebar-accent p-4 flex items-center justify-between group aria-disabled:pointer-events-none aria-disabled:opacity-40 cursor-pointer" 
+              onClick={() => !isFighterSelected(fighter.id) && onSelectAthlete(fighter)}
+            >
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-col items-center relative">
+                  <Avatar className="size-12">
+                    <AvatarFallback>{fighter.firstname[0]}</AvatarFallback>
+                    <AvatarImage src={fighter.avatar} />
+                  </Avatar>
+                  <ExpBadges  exp={fighter.expertises[0] as any} size={"sm"} className="z-1 mt-1 absolute left-[50%] -translate-x-[50%] -bottom-[15px] !text-[10px]"/>
                 </div>
-                <span className="text-sm text-muted-foreground">{fighter.team}</span>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <small>{fighter.record}</small>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">{fighter.firstname} {fighter.lastname}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <small>{fighter.wins} / {fighter.losses}</small>
+                  </div>
                 </div>
               </div>
+
+              <div className='flex flex-col'>
+                <span>{dayjs().diff(dayjs(fighter.birthdate), 'years')} anos</span>
+                <small className='text-muted-foreground'>
+                  {dayjs(fighter.birthdate).format('DD/MM/YYYY')}
+                </small>
+              </div>
+            </li>
+          ))
+        }
+        {
+          athletes.data?.length === 0 && (
+            <div className='flex flex-col items-center justify-center py-8 gap-2'>
+              <UserRoundSearch size={50}/>
+              <span className='text-center'>Nenhum atleta disponível</span>
             </div>
-          </li>
-        ))
-      }
-      {
-        athletes.data?.length === 0 && (
-          <div className='flex flex-col items-center justify-center py-8 gap-2'>
-            <UserRoundSearch size={50}/>
-            <span className='text-center'>Nenhum atleta disponível</span>
-          </div>
-        )
-      }
-      {
-        isLoading && (
-          <div className='flex flex-col gap-1'>
-            <Skeleton className='h-[60px] w-full'/>
-            <Skeleton className='h-[60px] w-full'/>
-            <Skeleton className='h-[60px] w-full'/>
-            <Skeleton className='h-[60px] w-full'/>
-          </div>
-        )
-      }
-    </ul>
+          )
+        }
+        {
+          isLoading && (
+            <div className='flex flex-col gap-1'>
+              <Skeleton className='h-[60px] w-full'/>
+              <Skeleton className='h-[60px] w-full'/>
+              <Skeleton className='h-[60px] w-full'/>
+              <Skeleton className='h-[60px] w-full'/>
+            </div>
+          )
+        }
+      </ul>
+    </div>
   )
 }

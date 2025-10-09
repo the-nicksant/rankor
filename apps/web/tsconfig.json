@@ -11,6 +11,7 @@
       "~/app/*": ["./app/*"],
       "~/features/*": ["./features/*"],
       "~/shared/*": ["./shared/*"],
+      
     }
   },
   "include": [

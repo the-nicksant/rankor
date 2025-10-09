@@ -14,7 +14,8 @@ export default [
       ...prefix('event/:eventId', [
         layout('routes/layouts/event-layout.tsx', [
           index('routes/app/main/events/profile/overview.tsx'),
-          route('fights', 'routes/app/main/events/profile/fights.tsx')
+          route('fights', 'routes/app/main/events/profile/fights.tsx'),
+          route('subscriptions', 'routes/app/main/events/profile/subscriptions.tsx')
         ])
       ])
     ]),

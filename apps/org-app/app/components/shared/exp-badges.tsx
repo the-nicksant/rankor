@@ -28,7 +28,7 @@ export const ExpBadges = ({ exp = "amateur", size = "default", className }: Reac
   }
 
   return (
-    <div className={expBadgeVariants({ className, size, exp })} color="red">
+    <div className={expBadgeVariants({ size, exp, className })} color="red">
       {labels[exp as keyof typeof labels]}
     </div>
   )

@@ -1,3 +1,4 @@
+import React from 'react'
 import "@repo/ui/styles.css";
 import "./globals.css";
 import type { Metadata } from "next";

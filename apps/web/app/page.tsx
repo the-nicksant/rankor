@@ -1,4 +1,5 @@
 
+import React from 'react'
 
 import Feature from "~/shared/components/landing/features";
 import Header2 from "~/shared/components/landing/header";

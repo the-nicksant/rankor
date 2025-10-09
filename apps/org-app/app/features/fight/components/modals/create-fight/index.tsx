@@ -218,7 +218,7 @@ export default function CreateFight({ onClose, payload }: ModalProps<CreateFight
           <Tabs defaultValue='athletes' className='mt-6'>
             <TabsList>
               <TabsTrigger value='athletes'>
-                Atletas disponíveis
+                Atletas inscritos
               </TabsTrigger>
             </TabsList>
             <TabsContent value='athletes'>
@@ -306,9 +306,8 @@ const AthleteProfile = ({ athlete, corner, onRemove }: AthleteProfileProps) => {
             : 'text-start justify-start pr-2'
         )}
       >
-        <h1 className='text-title text-xl'>{athlete?.name || 'Selecione um atleta'}</h1>
-        <p className='text-label'>{athlete?.team}</p>
-        <p className='text-label'>{athlete?.record}</p>
+        <h1 className='text-title text-xl'>{athlete?.firstname || 'Selecione um atleta'} {athlete?.lastname}</h1>
+        <p className='text-label'>{athlete?.wins} / {athlete?.losses}</p>
       </div>
     </div>
   )

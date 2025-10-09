@@ -7,6 +7,14 @@
     "moduleResolution": "Bundler",
     "allowJs": true,
     "jsx": "preserve",
-    "noEmit": true
+    "target": "esnext",
+    "esModuleInterop": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "lib": ["dom", "DOM.Iterable", "ESNext"],
+    "noEmit": true,
+    "paths": {
+      "react": ["./node_modules/@types/react"]
+    }
   }
 }

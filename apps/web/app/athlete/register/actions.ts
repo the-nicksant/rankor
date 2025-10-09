@@ -1,7 +1,6 @@
 'use server'
 
-export async function createAthlete(state: { error?: string | null, data?: any | null }, values: any) {
-  console.log('HITTING ACTION')
+export async function createAthlete(state: { success?: boolean, error?: string | null, data?: any | null }, values: any) {
   const response = await fetch('https://rankor-api.onrender.com/v1/athlete', {
     method: 'POST',
     headers: {
@@ -15,12 +14,14 @@ export async function createAthlete(state: { error?: string | null, data?: any |
   if (!response.ok) {
     return ({
       error: data || 'Ocorreu um erro ao criar sua conta',
-      data: null
+      data: null,
+      success: false,
     })
   }
   
   return {
     error: null,
-    data: data
+    data: data,
+    success: true
   }
 }

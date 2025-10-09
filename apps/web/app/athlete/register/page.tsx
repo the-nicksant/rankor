@@ -58,7 +58,7 @@ export default function Page() {
   const [modalities, loadingModalities] = useModalities()
   const [expertises, loadingExpertises] = useExpertises()
 
-  const [actionState, action, pendingAction] = useActionState(createAthlete, { error: null, data: null})
+  const [actionState, action, pendingAction] = useActionState(createAthlete, { error: null, data: null, success: false})
 
   const stepsFields = [
     ['firstname', 'lastname', 'nickname', 'birthdate', 'email', 'phone'],
@@ -99,7 +99,7 @@ export default function Page() {
       </div>
 
       <div 
-        hidden={!actionState.data}
+        hidden={!actionState.success}
         className='border border-border rounded-lg delay-150 p-12 flex items-center justify-center flex-col'
       >
          <CheckCircle size={80} className='text-rankor mb-4'/>
@@ -109,7 +109,7 @@ export default function Page() {
         </p>
       </div>
 
-      <div className='transition-all' hidden={pendingAction}>
+      <div className='transition-all' hidden={pendingAction || actionState.success}>
         <form ref={formRef}>
           <Stepper
             initialStep={1}
@@ -292,7 +292,7 @@ export default function Page() {
                             <Checkbox 
                               id={modality.code} 
                               value={modality.code}
-                              checked={field.value?.includes(modality.code)}
+                              checked={field.value?.includes(modality.code as never )}
                               onCheckedChange={() => field.onChange(
                                 toggleValue(
                                   modality.code, 
@@ -342,7 +342,7 @@ export default function Page() {
                             <Checkbox 
                               id={expertise.id} 
                               value={expertise.id}
-                              checked={field.value.includes(expertise.id)}
+                              checked={field.value.includes(expertise.id as never)}
                               onCheckedChange={() => field.onChange(
                                 toggleValue(
                                   expertise.id, 
