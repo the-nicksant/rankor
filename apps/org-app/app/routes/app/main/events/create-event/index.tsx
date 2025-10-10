@@ -72,7 +72,7 @@ const CurrentStep = () => {
   ];
 
   return (
-    <div className="w-full flex-1 h-full min-h-[calc(100vh-60px)] p-4 md:p-8 bg-background">
+    <div className="w-full flex-1 h-full min-h-[calc(100vh-60px)] p-8 bg-background">
       <AnimatePresence mode="wait">
         {steps.map((step, index) => (
           index === currentStep && (

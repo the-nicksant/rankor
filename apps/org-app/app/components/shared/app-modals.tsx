@@ -7,7 +7,7 @@ export enum ModalKeys {
 }
 
 const modalComponents: Record<ModalKeys, React.LazyExoticComponent<any>> = {
-  createFight: lazy(() => import('~/features/fight/components/modals/create-fight/index'))
+  createFight: lazy(() => import('~/features/fight/components/modals/create-fight-v2/index')),
 }
 
 export function AppModals() {
