@@ -11,6 +11,7 @@ type UpdateEventModalityConfigMutationOptions = UseMutationOptions<void, CustomA
 type UpdateEventSubscriptionConfigMutationOptions = UseMutationOptions<void, CustomAxiosError, { eventId: string, values: SubscriptionConfigFormValues }>;
 
 type UpdateEventBannerMutationOptions = UseMutationOptions<void, CustomAxiosError, { eventId: string, banner: File }>;
+type CompleteEventRegistrationMutationOptions = UseMutationOptions<void, CustomAxiosError, { eventId: string }>;
 
 export const useCreateEvent = (options?: CreateEventMutationOptions) => {
   return useMutation({
@@ -57,6 +58,15 @@ export const useUpdateBanner = (options?: UpdateEventBannerMutationOptions) => {
   return useMutation({
     mutationFn: async (values: { eventId: string, banner: File }) => {
       return await EventUseCases.uploadBanner(values.eventId, values.banner);
+    },
+    ...options
+  })
+}
+
+export const useCompleteRegistration = (options?: CompleteEventRegistrationMutationOptions) => {
+  return useMutation({
+    mutationFn: async (values: { eventId: string }) => {
+      return await EventUseCases.completeEventRegistration(values.eventId);
     },
     ...options
   })

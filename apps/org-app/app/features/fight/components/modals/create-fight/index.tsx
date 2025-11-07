@@ -76,7 +76,7 @@ export default function CreateFight({ onClose, payload }: ModalProps<CreateFight
   const availableModalitiesKeys = Object.keys(event?.modalitiesConfig || {})
   const availableWeightClasses = event
     ?.modalitiesConfig[state.modality as string]
-    ?.weightclasses
+    ?.weightClasses
       .map(weightclass => ({
         label: weightclass.title,
         value: [weightclass.minWeight, weightclass.maxWeight].toString()

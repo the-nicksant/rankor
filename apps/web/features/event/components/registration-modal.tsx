@@ -5,69 +5,67 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@repo/ui/dialo
 import { Button } from '@repo/ui/button'
 import { Label } from '@repo/ui/label'
 import { RadioGroup, RadioGroupItem } from '@repo/ui/radio-group'
-import Select from '@repo/ui/select'
+import { Checkbox } from '@repo/ui/checkbox'
 import { cn } from '@repo/ui/cn'
 import { subscribeToEvent } from '~/app/event/[eventId]/actions'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { Event } from '../models/event'
 
 type RegistrationModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  eventId: string
+  event: Event
 }
 
 const registrationSchema = z.object({
   modality: z.string().min(1, 'Selecione uma modalidade'),
-  expertiseId: z.string().min(1, 'Selecione seu nível de experiência'),
-  weightClass: z.string().min(1, 'Selecione uma categoria de peso')
+  expertise: z.string().min(1, 'Selecione seu nível de experiência'),
+  weightClasses: z.array(z.number()).min(1, 'Selecione uma categoria de peso')
 })
+
+const MOCK_ATLETE_ID = '792a8c2a-7e80-4f42-bc6e-e326f6847c96'
 
 type RegistrationForm = z.infer<typeof registrationSchema>
 
-export function RegistrationModal({ open, onOpenChange, eventId }: RegistrationModalProps) {
-  const [state, formAction, isPending] = useActionState(subscribeToEvent, { success: false, data: null })
+export function RegistrationModal({ open, onOpenChange, event }: RegistrationModalProps) {
+  const [state, formAction, isPending] = useActionState(subscribeToEvent, { success: false, error: null, data: null })
   
-  const { control, handleSubmit, formState: { errors } } = useForm<RegistrationForm>({
+  const { control, handleSubmit, formState: { errors }, watch } = useForm<RegistrationForm>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
       modality: '',
-      expertiseId: '',
-      weightClass: ''
+      expertise: '',
+      weightClasses: []
     }
   })
 
-  const expertiseIds = ['Iniciante', 'Amador', 'Semi-Pro', 'Profissional']
-  const weightClasses = [
-    { value: 'flyweight', label: 'Peso Mosca (até 57kg)' },
-    { value: 'bantamweight', label: 'Peso Galo (até 61kg)' },
-    { value: 'featherweight', label: 'Peso Pena (até 66kg)' },
-    { value: 'lightweight', label: 'Peso Leve (até 70kg)' },
-    { value: 'welterweight', label: 'Peso Meio-Médio (até 77kg)' },
-    { value: 'middleweight', label: 'Peso Médio (até 84kg)' },
-    { value: 'lightheavyweight', label: 'Peso Meio-Pesado (até 93kg)' },
-    { value: 'heavyweight', label: 'Peso Pesado (acima de 93kg)' }
-  ]
+  const selectedModality = watch('modality')
 
-  const eventModalities = ['Jiu-Jitsu', 'Muay Thai', 'Boxing', 'MMA']
+  const eventModalities = Object.keys(event.modalitiesConfig) || []
+  const availableWeightClasses = event.modalitiesConfig[selectedModality]?.weightClasses || []
+  const availableExpertises = event.modalitiesConfig[selectedModality]?.experience || []
 
   const onSubmit = (data: RegistrationForm) => {
-    
-    startTransition(() => formAction({
+    const payload = {
       ...data,
-      athleteId: 'aaa',
-      eventId,
-    }))
-    
+      eventId: event.id,
+      athleteId: MOCK_ATLETE_ID
+    }
+    startTransition(() => formAction(payload))
+  }
+
+  // Close modal when registration is successful
+  React.useEffect(() => {
     if (state.success) {
       onOpenChange(false)
     }
-  }
+  }, [state.success, onOpenChange])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='max-w-lg h-full max-h-screen md:h-fit md:max-h-[90vh] overflow-y-auto'>
+      <DialogContent className='max-w-xl h-full max-h-screen md:h-fit md:max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle className='text-xl'>Inscrição no Evento</DialogTitle>
         </DialogHeader>
@@ -99,12 +97,6 @@ export function RegistrationModal({ open, onOpenChange, eventId }: RegistrationM
                       )}
                     >
                       <div className='font-medium'>{modality}</div>
-                      <div className='text-sm text-muted-foreground mt-1'>
-                        {modality === 'Jiu-Jitsu' && 'Arte suave brasileira'}
-                        {modality === 'Muay Thai' && 'Arte das oito armas'}
-                        {modality === 'Boxing' && 'Nobre arte'}
-                        {modality === 'MMA' && 'Artes marciais mistas'}
-                      </div>
                     </button>
                   ))}
                 </div>
@@ -114,7 +106,7 @@ export function RegistrationModal({ open, onOpenChange, eventId }: RegistrationM
           />
 
           <Controller
-            name='expertiseId'
+            name='expertise'
             control={control}
             render={({ field }) => (
               <div>
@@ -124,7 +116,7 @@ export function RegistrationModal({ open, onOpenChange, eventId }: RegistrationM
                   onValueChange={field.onChange}
                   className='grid grid-cols-2 sm:grid-cols-4 gap-3'
                 >
-                  {expertiseIds.map((experience) => (
+                  {availableExpertises.map((experience) => (
                     <div key={experience} className='flex items-center space-x-2'>
                       <RadioGroupItem value={experience} id={experience} />
                       <Label htmlFor={experience} className='text-sm font-medium cursor-pointer'>
@@ -133,24 +125,45 @@ export function RegistrationModal({ open, onOpenChange, eventId }: RegistrationM
                     </div>
                   ))}
                 </RadioGroup>
-                {errors.expertiseId && <span className='text-sm text-destructive'>{errors.expertiseId.message}</span>}
+                {errors.expertise && <span className='text-sm text-destructive'>{errors.expertise.message}</span>}
               </div>
             )}
           />
 
           <Controller
-            name='weightClass'
+            name='weightClasses'
             control={control}
             render={({ field }) => (
               <div>
-                <Label className='text-base font-semibold mb-4 block'>Categoria de peso</Label>
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  options={weightClasses}
-                  placeholder='Selecione sua categoria'
-                />
-                {errors.weightClass && <span className='text-sm text-destructive'>{errors.weightClass.message}</span>}
+                <Label className='text-base font-semibold mb-4 block'>Categorias de peso</Label>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                  {availableWeightClasses.map((weightClass) => {
+                    const weightClassId = `${weightClass.title}-${weightClass.minWeight}-${weightClass.maxWeight}`
+                    return (
+                      <div key={weightClassId} className='flex items-center space-x-2'>
+                        <Checkbox
+                          id={weightClassId}
+                          checked={field.value?.includes(weightClass.maxWeight) || false}
+                          onCheckedChange={(checked) => {
+                            const currentValues = field.value || []
+                            if (checked) {
+                              field.onChange([...currentValues, weightClass.maxWeight])
+                            } else {
+                              field.onChange(currentValues.filter((weight: number) => weight !== weightClass.maxWeight))
+                            }
+                          }}
+                        />
+                        <Label 
+                          htmlFor={weightClassId} 
+                          className='text-sm font-medium cursor-pointer flex-1'
+                        >
+                          {weightClass.title} (até {weightClass.maxWeight}kg)
+                        </Label>
+                      </div>
+                    )
+                  })}
+                </div>
+                {errors.weightClasses && <span className='text-sm text-destructive'>{errors.weightClasses.message}</span>}
               </div>
             )}
           />

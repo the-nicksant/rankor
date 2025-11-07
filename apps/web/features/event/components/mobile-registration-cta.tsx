@@ -2,26 +2,38 @@
 
 import React, { useState } from 'react'
 import { Button } from '@repo/ui/button'
-import { ChevronUp, ChevronDown, Users } from 'lucide-react'
+import { ChevronUp, ChevronDown, Users, LogIn } from 'lucide-react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@repo/ui/collapsible'
 import { RegistrationModal } from './registration-modal'
+import Link from 'next/link'
+import { Event } from '../models/event'
 
 type MobileRegistrationCTAProps = {
-  price: string
+  price: string | null
   registeredAthletes: number
   registrationDeadline: string
-  eventId: string
+  event: Event
+  isAuthenticated: boolean
 }
 
 export function MobileRegistrationCTA({ 
   price, 
   registeredAthletes, 
   registrationDeadline,
-  eventId
+  event,
+  isAuthenticated
 }: MobileRegistrationCTAProps) {
 
   const [isOpen, setIsOpen] = useState(false)
   const [showRegistrationModal, setShowRegistrationModal] = useState(false)
+
+  const handleRegistrationClick = () => {
+    if (isAuthenticated) {
+      setShowRegistrationModal(true)
+    }
+  }
+
+  const loginUrl = `/athlete/login?redirect=${encodeURIComponent(`/event/${event.id}`)}`
 
   return (
     <>
@@ -35,20 +47,38 @@ export function MobileRegistrationCTA({
                 {registeredAthletes || 45} atletas inscritos
               </span>
             </div>
-            <div className='text-2xl font-bold text-primary mb-1'>
-              R$ {price || '150,00'}
-            </div>
-            <p className='text-sm text-muted-foreground'>Taxa de inscrição</p>
+            {
+              price &&
+                <>
+                  <div className='text-2xl font-bold text-primary mb-1'>
+                    R$ {price || '150,00'}
+                  </div>
+                  <p className='text-sm text-muted-foreground'>Taxa de inscrição</p>
+                </>
+            }
           </div>
 
           <div className='space-y-4'>
-            <Button 
-              size={'lg'} 
-              className='w-full rounded-md text-lg'
-              onClick={() => setShowRegistrationModal(true)}
-            >
-              Inscrever-se
-            </Button>
+            {isAuthenticated ? (
+              <Button 
+                size={'lg'} 
+                className='w-full rounded-md text-lg'
+                onClick={handleRegistrationClick}
+              >
+                Inscrever-se
+              </Button>
+            ) : (
+              <Link href={loginUrl}>
+                <Button 
+                  size={'lg'} 
+                  className='w-full rounded-md text-lg'
+                  variant="outline"
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Fazer Login para Inscrever-se
+                </Button>
+              </Link>
+            )}
           </div>
 
           <div className='mt-6 pt-6 border-t'>
@@ -93,23 +123,38 @@ export function MobileRegistrationCTA({
                 </Button>
               </CollapsibleTrigger>
             </div>
-            <Button 
-              size='lg' 
-              className='w-full rounded-md text-lg'
-              onClick={() => setShowRegistrationModal(true)}
-            >
-              Inscrever-se
-            </Button>
+            {isAuthenticated ? (
+              <Button 
+                size='lg' 
+                className='w-full rounded-md text-lg'
+                onClick={handleRegistrationClick}
+              >
+                Inscrever-se
+              </Button>
+            ) : (
+              <Link href={loginUrl}>
+                <Button 
+                  size='lg' 
+                  className='w-full rounded-md text-lg'
+                  variant="outline"
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Fazer Login para Inscrever-se
+                </Button>
+              </Link>
+            )}
           </div>
         </Collapsible>
       </div>
 
 
-      <RegistrationModal 
-        open={showRegistrationModal}
-        onOpenChange={setShowRegistrationModal}
-        eventId={eventId}
-      />
+      {isAuthenticated && (
+        <RegistrationModal 
+          open={showRegistrationModal}
+          onOpenChange={setShowRegistrationModal}
+          event={event}
+        />
+      )}
     </>
   )
 }

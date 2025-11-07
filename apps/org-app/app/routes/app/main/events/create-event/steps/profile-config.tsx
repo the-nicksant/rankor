@@ -11,7 +11,7 @@ import { Input } from '@repo/ui/input'
 import { Delete, Trash } from 'lucide-react'
 import UploadInput from '@repo/ui/upload'
 import { useEffect } from 'react'
-import { useUpdateBanner, useUpdateEventPage } from '~/features/event/hooks/mutations'
+import { useCompleteRegistration, useUpdateBanner, useUpdateEventPage } from '~/features/event/hooks/mutations'
 import { toast } from 'sonner'
 
 export const ProfileConfigForm = () => {
@@ -35,12 +35,16 @@ export const ProfileConfigForm = () => {
 
   const { previousStep, setCurrentStep, currentEvent, updateCurrentEventData } = useEventCreation()
 
+  const { mutateAsync: completeRegistration } = useCompleteRegistration({ })
+
   const { mutateAsync: saveProfileConfig, isPending } = useUpdateEventPage({
     onSuccess: (_, data) => {
       updateCurrentEventData({ 
         website: data.values.website, 
         about: data.values.about 
       })
+
+      completeRegistration({ eventId: eventId! })
       navigate(`/app/event/${eventId}`)
     }
   })

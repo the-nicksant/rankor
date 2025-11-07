@@ -34,3 +34,11 @@ export const useEvent = (parmas: { eventId?: string }) => {
     }
   })
 }
+  
+export const useSubscriptions = (params: EventUseCases.Requests.GetSubscriptionsFilter & { eventId: string }) => {
+  return useQuery({
+    enabled: !!params.eventId,
+    queryKey: ['fetch-subcriptions', params],
+    queryFn: async () => await EventUseCases.getSubscriptions(params.eventId, params)
+  })
+}

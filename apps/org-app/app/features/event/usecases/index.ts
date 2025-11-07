@@ -1,6 +1,7 @@
 import { apiClient } from "~/lib/http/http-client";
 import type { Event } from "~/features/event/models/event";
 import type { CreateEventFormValues, ProfileConfigFormValues, SubscriptionConfigFormValues } from "~/features/event/schemas/event-forms";
+import type { Paginated } from "~/shared/types/protocol/paginated";
 
 export namespace EventUseCases {
   export const createEvent = async (values: CreateEventFormValues) => {
@@ -51,5 +52,28 @@ export namespace EventUseCases {
     const res = await apiClient.get(`/v1/event/${eventId}`);
 
     return res.data
+  }
+
+  export const completeEventRegistration = async (eventId: string): Promise<void> => {
+    const res = await apiClient.put(`/v1/event/${eventId}/complete`);
+
+    return res.data
+  }
+
+  export const getSubscriptions = async (eventId: string, filters: Requests.GetSubscriptionsFilter): Promise<Paginated<any>> => {
+    const res = await apiClient.get(`/v1/event/${eventId}/subcriptions`, { params: filters });
+
+    return res.data
+  }
+
+
+  export namespace Requests {
+    export interface GetSubscriptionsFilter {
+      skip: number, 
+      take: number
+      modalities?: string[]
+      expertises?: string[]
+      statuses?: string[]
+    }
   }
 }

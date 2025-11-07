@@ -3,7 +3,7 @@ import { Skeleton } from "@repo/ui/skeleton";
 
 import { motion } from "motion/react";
 
-import { useEvent } from "~/features/event/hooks/data";
+import { useEvent, useSubscriptions } from "~/features/event/hooks/data";
 import { Input } from "@repo/ui/input";
 import { DataTable } from "@repo/ui/data-table";
 import { Check, CheckCheckIcon, CheckCircle, Clock, Copy, Search, X, XCircle } from "lucide-react";
@@ -13,6 +13,7 @@ import { useModalsStore } from "~/shared/stores/modal-store";
 import { Avatar, AvatarFallback } from "@repo/ui/avatar";
 import SpotlightCard from "~/components/shared/spotlight-card";
 import { Button } from "@repo/ui/button";
+import { useState } from "react";
 
 export function Loading (){
   return <Skeleton className="w-full"/>
@@ -21,7 +22,21 @@ export function Loading (){
 export default function SubscriptionsPage({ params }: Route.ComponentProps) {
   
   const openModal = useModalsStore(s => s.openModal)
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const take = 30
+
+  const [selectedStatus, setSelectedStatus] = useState<string[]>([])
+  const [selectedModalities, setSelectedModalities] = useState<string[]>([])
+  const [selectedExpertises, setSelectedExpertises] = useState<string[]>([])
+
   const { data: event, isLoading } = useEvent({ eventId: params.eventId })
+
+  const { data: subscriptions, isLoading: loadingSubscriptions } = useSubscriptions({
+    eventId: event?.id!,
+    skip: (currentPage - 1) * take,
+    take: take,
+  })
 
   if(!event || isLoading){
     return (
@@ -145,13 +160,10 @@ export default function SubscriptionsPage({ params }: Route.ComponentProps) {
         </header>
 
         <DataTable 
-          data={[
-            {name: 'Sérgio Silva', modality: 'MuayThai', expertise: 'Amador', weightClass: 'Peso médio', status: 'Pendente'},
-            {name: 'Ana Paula', modality: 'Boxe', expertise: 'Profissional', weightClass: 'Peso leve', status: 'Aprovado'},
-            {name: 'Carlos Eduardo', modality: 'Jiu-Jitsu', expertise: 'Amador', weightClass: 'Peso pesado', status: 'Rejeitado'},
-            {name: 'Mariana Souza', modality: 'MuayThai', expertise: 'Profissional', weightClass: 'Peso médio', status: 'Pendente'},
-            {name: 'Lucas Pereira', modality: 'Boxe', expertise: 'Amador', weightClass: 'Peso leve', status: 'Aprovado'},
-          ]}
+          data={subscriptions?.data || []}
+          pagination={true}
+          pageSize={take}
+          loading={isLoading}
           columns={[
             {
               accessorKey: 'name',

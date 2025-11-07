@@ -1,19 +1,14 @@
-import { useState } from 'react';
-import { Badge } from '@repo/ui/badge';
-import { Button } from '@repo/ui/button';
 import {
   Stepper,
-  StepperContent,
   StepperDescription,
   StepperIndicator,
   StepperItem,
   StepperNav,
-  StepperPanel,
   StepperSeparator,
   StepperTitle,
   StepperTrigger,
 } from '@repo/ui/ui-stepper';
-import { BookUser, Check, CreditCard, ListTodo, LoaderCircleIcon, LockKeyhole } from 'lucide-react';
+import { Check, LoaderCircleIcon } from 'lucide-react';
 
 type Props = {
   currentStep: number;
@@ -29,23 +24,24 @@ export function FormStepper({ currentStep, steps}: Props) {
 
   return (
     <Stepper
+      orientation='vertical'
       value={currentStep}
       onValueChange={() => {}}
       indicators={{
         completed: <Check className="size-4" />,
         loading: <LoaderCircleIcon className="size-4 animate-spin" />,
       }}
-      className="space-y-8"
+      className="flex-col flex"
     >
-      <StepperNav className="gap-3 mb-15">
+      <StepperNav className="gap-3 flex flex-col">
         {steps.map((step, index) => {
           return (
-            <StepperItem key={index} step={index + 1} className="relative flex-1 items-start">
+            <StepperItem key={index} step={index + 1} className={`relative flex-1 items-start last-of-type:whitespace-nowrap last-of-type:flex-0`}>
               <StepperTrigger className="flex flex-col items-start justify-center gap-2.5 grow" asChild>
                 <StepperIndicator className="size-8 border-2 data-[state=completed]:text-white data-[state=completed]:bg-green-500 data-[state=inactive]:bg-transparent data-[state=inactive]:border-border data-[state=inactive]:text-muted-foreground">
                   <step.icon className="size-4" />
                 </StepperIndicator>
-                <div className="flex flex-col items-start gap-1">
+                <div className="hidden md:flex flex-col items-start gap-1">
                   <div className="text-[10px] font-semibold uppercase text-muted-foreground">Passo {index + 1}</div>
                   <StepperTitle className="text-start text-base font-semibold group-data-[state=inactive]/step:text-muted-foreground">
                     {step.title}
@@ -63,6 +59,16 @@ export function FormStepper({ currentStep, steps}: Props) {
           );
         })}
       </StepperNav>
+
+      <article className="md:hidden gap-1">
+        <div className="text-[10px] font-semibold uppercase text-muted-foreground">Passo {currentStep}</div>
+        <span className="text-start text-base font-semibold group-data-[state=inactive]/step:text-muted-foreground">
+          {steps[currentStep - 1].title}
+        </span>
+        <p className='text-start font-normal text-muted-foreground text-xs'>
+          {steps[currentStep - 1].description}
+        </p>
+      </article>
     </Stepper>
   );
 }

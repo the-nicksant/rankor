@@ -47,7 +47,7 @@ const weightClassSchema = z.object({
 export const modalityConfigSchema = z.object({
   modalitiesConfig: z.record(z.string(), z.object({
     experience: z.array(z.string()).min(1, 'Selecione ao menos uma experiência'),
-    weightclasses: z.array(weightClassSchema)
+    weightClasses: z.array(weightClassSchema)
       .refine(validateWeightClasses, {
         message: 'Categorias de peso conflitantes detectadas. Por favor, ajuste os valores.',
       })

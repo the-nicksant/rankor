@@ -146,7 +146,7 @@ export const ModalityConfigEventForm = () => {
 
                       {
                         configs?.[modality]?.experience?.length > 0 && 
-                        configs?.[modality]?.weightclasses?.length > 0 && (
+                        configs?.[modality]?.weightClasses?.length > 0 && (
                           <CheckCircle className='text-rankor'/>
                         )
                       }
@@ -234,7 +234,7 @@ function WeightClassesFieldArray({
   const { setValue } = useFormContext()
   const { fields, append, remove } = useFieldArray({
     control,
-    name: `modalitiesConfig.${modality.code}.weightclasses`,
+    name: `modalitiesConfig.${modality.code}.weightClasses`,
     rules: { minLength: 1, required: true }
   });
 
@@ -257,7 +257,7 @@ function WeightClassesFieldArray({
               size={"sm"} 
               icon={<List />}
               type='button'
-              onClick={() => setValue(`modalitiesConfig.${modality.code}.weightclasses`, modality.config.defaultWeightClasses)}
+              onClick={() => setValue(`modalitiesConfig.${modality.code}.weightClasses`, modality.config.defaultWeightClasses)}
             >
               Escolher pré-definição
             </Button>
@@ -276,25 +276,25 @@ function WeightClassesFieldArray({
         {fields.map((field, idx) => (
           <div key={field.id} className='flex gap-2 items-center'>
             <Input 
-              {...register(`modalitiesConfig.${modality.code}.weightclasses.${idx}.title`)} placeholder='Nome' 
+              {...register(`modalitiesConfig.${modality.code}.weightClasses.${idx}.title`)} placeholder='Nome' 
               size={'sm'}
-              aria-invalid={errors.modalitiesConfig?.[modality.code]?.weightclasses[idx]?.name ? 'true' : 'false'}
+              aria-invalid={errors.modalitiesConfig?.[modality.code]?.weightClasses[idx]?.name ? 'true' : 'false'}
             />
             <Input 
               type='number' 
-              {...register(`modalitiesConfig.${modality.code}.weightclasses.${idx}.minWeight`, { valueAsNumber: true })} 
+              {...register(`modalitiesConfig.${modality.code}.weightClasses.${idx}.minWeight`, { valueAsNumber: true })} 
               placeholder='Peso Mínimo' 
               step={'0.1'}
               size={'sm'}
-              aria-invalid={errors.modalitiesConfig?.[modality.code]?.weightclasses[idx]?.minWeight ? 'true' : 'false'}
+              aria-invalid={errors.modalitiesConfig?.[modality.code]?.weightClasses[idx]?.minWeight ? 'true' : 'false'}
             />
             <Input 
               type='number' 
-              {...register(`modalitiesConfig.${modality.code}.weightclasses.${idx}.maxWeight`, { valueAsNumber: true })} 
+              {...register(`modalitiesConfig.${modality.code}.weightClasses.${idx}.maxWeight`, { valueAsNumber: true })} 
               placeholder='Peso Máximo'
               size={'sm'}
               step={'0.1'}
-              aria-invalid={errors.modalitiesConfig?.[modality.code]?.weightclasses[idx]?.maxWeight ? 'true' : 'false'}
+              aria-invalid={errors.modalitiesConfig?.[modality.code]?.weightClasses[idx]?.maxWeight ? 'true' : 'false'}
             />
 
             <Button type='button' variant='outline' onClick={() => remove(idx)} size={'sm'}>Remover</Button>
@@ -303,8 +303,8 @@ function WeightClassesFieldArray({
       </div>
 
       {
-        errors.modalitiesConfig?.[modality.code]?.weightclasses?.length > 0 &&
-        errors.modalitiesConfig?.[modality.code]?.weightclasses?.map((wc: any, idx: number) => (
+        errors.modalitiesConfig?.[modality.code]?.weightClasses?.length > 0 &&
+        errors.modalitiesConfig?.[modality.code]?.weightClasses?.map((wc: any, idx: number) => (
           <div key={idx}>
             <small className='text-destructive' key={wc[0]}>
               {wc.name?.message}
@@ -321,18 +321,18 @@ function WeightClassesFieldArray({
 
       {
         /* @ts-ignore */
-        errors.modalitiesConfig?.[modality.code]?.weightclasses && 
+        errors.modalitiesConfig?.[modality.code]?.weightClasses && 
           <small className='text-destructive'>
             { /* @ts-ignore */}
-            {errors.modalitiesConfig?.[modality.code]?.weightclasses.message}
+            {errors.modalitiesConfig?.[modality.code]?.weightClasses.message}
           </small>
       }
       {
         /* @ts-ignore */
-        errors.modalitiesConfig?.[modality.code]?.weightclasses.root && 
+        errors.modalitiesConfig?.[modality.code]?.weightClasses.root && 
           <small className='text-destructive'>
             { /* @ts-ignore */}
-            {errors.modalitiesConfig?.[modality.code]?.weightclasses.root.message}
+            {errors.modalitiesConfig?.[modality.code]?.weightClasses.root.message}
           </small>
       }
     </div>

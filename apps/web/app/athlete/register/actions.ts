@@ -1,7 +1,7 @@
 'use server'
 
 export async function createAthlete(state: { success?: boolean, error?: string | null, data?: any | null }, values: any) {
-  const response = await fetch('https://rankor-api.onrender.com/v1/athlete', {
+  const response = await fetch('https://17784047891d.ngrok-free.app/v1/athlete', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

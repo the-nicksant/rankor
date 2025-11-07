@@ -8,15 +8,26 @@ type Props = {
   value: string
   description: string
   image?: string
+  size?: 'default' | 'small'
 }
 
-export const SelectionCard = React.memo(({ value, title, description, image, checked, onClick }: Props) => {
+export const SelectionCard = React.memo(({ 
+  value, 
+  title, 
+  description, 
+  image, 
+  checked, 
+  onClick,
+  size = 'default' 
+}: Props) => {
   return (
     <button
       type='button'
       onClick={() => onClick(value)}
       className={cn(
         'rounded-lg border-2 border-border flex flex-col items-center justify-end gap-2 relative h-[200px] w-[200px] bg-card transition-all overflow-hidden group',
+        size === 'small' && 'h-[170px] w-[170px]',
+        checked && 'border-rankor',
         checked && 'border-rankor'
       )}
     >
