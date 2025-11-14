@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@number-flow/react": "^0.5.10",
     "@repo/ui": "workspace:*",
+    "gsap": "^3.13.0",
     "lucide-react": "^0.539.0",
     "motion": "^12.23.12",
     "next": "^15.4.2",

@@ -2,9 +2,13 @@
 import React from 'react'
 
 import Feature from "~/shared/components/landing/features";
+import { Footer } from '~/shared/components/landing/footer';
 import Header2 from "~/shared/components/landing/header";
 import LucyHero from "~/shared/components/landing/hero";
+import { JoinWishList } from '~/shared/components/landing/join-wishlist';
 import SimplePricing from "~/shared/components/landing/pricing";
+import { Problems } from '~/shared/components/landing/problems';
+import { SplitEntitiesCTA } from '~/shared/components/landing/split-entities-cta';
 
 export default function Page() {
   
@@ -23,14 +27,14 @@ export default function Page() {
       
       <Header2 />
       <LucyHero />
-
-      <div className="h-[200px]"/>
-
+      <SplitEntitiesCTA />
+      <Problems />
       <Feature />
 
-      <div className="h-[200px]"/>
+      <JoinWishList />
 
-      <SimplePricing />
+
+      <Footer />
 
     </main>
   );

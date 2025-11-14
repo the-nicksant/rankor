@@ -13,6 +13,7 @@ import {
 
 import { motion, useAnimation, useInView } from 'motion/react'
 import { useEffect, useRef } from 'react';
+import MagicBento from '../magic-bento';
 
 
 type FeatureItem = {
@@ -77,37 +78,6 @@ const rightFeatures: FeatureItem[] = [
   },
 ];
 
-// Feature card component
-const FeatureCard = ({ feature }: { feature: FeatureItem }) => {
-  const Icon = feature.icon;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
-      <div
-        className={cn(
-          'relative rounded-2xl px-4 pt-4 pb-4 text-sm',
-          'bg-card/50 ring-border ring',
-          feature.cornerStyle,
-        )}
-      >
-        <div className="text-rankor mb-3 text-[2rem]">
-          <Icon />
-        </div>
-        <h2 className="text-foreground mb-2.5 text-2xl">{feature.title}</h2>
-        <p className="text-muted-foreground text-base text-pretty">
-          {feature.description}
-        </p>
-        {/* Decorative elements */}
-        <span className="from-rankor/10 via-rankor to-rankor/0 absolute -bottom-px left-1/2 h-px w-1/2 -translate-x-1/2 bg-gradient-to-r opacity-60"></span>
-        <span className="absolute inset-0 bg-[radial-gradient(30%_5%_at_50%_100%,hsl(var(--rankor)/0.15)_0%,transparent_100%)] opacity-60"></span>
-      </div>
-    </motion.div>
-  );
-};
-
 export default function Feature() {
   const ref = useRef(null)
 
@@ -122,14 +92,14 @@ export default function Feature() {
 
   return (
     <section 
-      className={'w-full'}
+      className={'w-full flex items-center justify-center px-8 lg:p-0'}
       id="features" 
       ref={ref}
     >
       <motion.div 
         initial="hidden"
         animate={controls}
-        className="mx-6 max-w-7xl px-4 pt-2 pb-16 max-[300px]:mx-4 min-[1150px]:mx-auto"
+        className="max-w-7xl w-full flex items-center jusitfy-center flex-col"
         variants={{
           hidden: { opacity: 0, y: -50 },
           visible: {
@@ -143,36 +113,58 @@ export default function Feature() {
           },
         }}
       >
-        <div className="flex flex-col-reverse gap-6 md:grid md:grid-cols-3">
-          {/* Left column */}
-          <div className="flex flex-col gap-6">
-            {leftFeatures.map((feature, index) => (
-              <FeatureCard key={`left-feature-${index}`} feature={feature} />
-            ))}
+        <header className='pb-12 flex items-center justify-center flex-col'>
+          <h1 className='text-3xl lg:text-5xl font-semibold max-w-[60%] text-center'>
+            A Estrutura que seu Evento Precisa
+          </h1>
+          <p className='max-w-[500px] text-muted-foreground mt-6 text-center'>
+            Tudo que você precisa para profissionalizar seus eventos, em um só lugar.
+          </p>
+        </header>
+
+        <div className='grid grid-cols-1 gap-6 lg:grid-cols-6 lg:grid-rows-2 w-full flex-1'>
+          <div className='relative col-span-1 lg:col-span-4 w-full h-[600px] border border-border rounded-xl flex flex-col gap-12 flex-1 p-6 hover:'>
+            <header className='pb-8 flex items-center justify-center flex-col'>
+              <h1 className='text-2xl font-semibold max-w-[60%] text-center'>
+                Gestão de Eventos Centralizada
+              </h1>
+              <p className='max-w-[500px] text-muted-foreground mt-2 text-center text-base'>
+                Crie e administre seus eventos, categorias de peso e inscrições em um painel único e intuitivo.
+              </p>
+            </header>
           </div>
 
-          {/* Center column */}
-          <div className="order-[1] mb-6 self-center sm:order-[0] md:mb-0">
-            <div className="bg-card text-foreground ring-border relative mx-auto mb-4.5 w-fit rounded-full rounded-bl-[2px] px-4 py-2 text-sm ring">
-              <span className="relative z-1 flex items-center gap-2">
-                Funcionalidades
-              </span>
-              <span className="from-rankor/0 via-rankor to-rankor/0 absolute -bottom-px left-1/2 h-px w-2/5 -translate-x-1/2 bg-gradient-to-r"></span>
-              <span className="absolute inset-0 bg-[radial-gradient(30%_40%_at_50%_100%,hsl(var(--rankor)/0.25)_0%,transparent_100%)]"></span>
-            </div>
-            <h2 className="text-foreground mb-2 text-center text-2xl sm:mb-2.5 md:text-[2rem]">
-              Porque usar Rankor?
-            </h2>
-            <p className="text-muted-foreground mx-auto max-w-[18rem] text-center text-pretty">
-              Rankor é melhor jeito de controlar seu evento sem perder a essência e autonomia.
-            </p>
+          <div className='relative col-span-1 lg:col-span-2 w-full h-[600px] border border-border rounded-xl flex flex-col gap-12 flex-1 p-6'>
+            <header className='pb-8 flex items-center justify-center flex-col'>
+              <h1 className='text-2xl font-semibold max-w-[60%] text-center'>
+                Ranking Automatizado
+              </h1>
+              <p className='max-w-[500px] text-muted-foreground mt-2 text-center text-base'>
+                Nosso sistema de pontuação atualiza o ranking por categoria após cada luta. Gere rivalidade saudável.
+              </p>
+            </header>
           </div>
 
-          {/* Right column */}
-          <div className="flex flex-col gap-6">
-            {rightFeatures.map((feature, index) => (
-              <FeatureCard key={`right-feature-${index}`} feature={feature} />
-            ))}
+          <div className='relative col-span-1 lg:col-span-3 w-full h-[500px] border border-border rounded-xl flex flex-col gap-12 flex-1 p-6'>
+            <header className='pb-8 flex items-center justify-center flex-col'>
+              <h1 className='text-2xl font-semibold max-w-[60%] text-center'>
+                Perfis de Atleta e Histórico
+              </h1>
+              <p className='max-w-[500px] text-muted-foreground mt-2 text-center text-base'>
+                Cada competidor ganha uma página pública com seu cartel e posição no ranking. Um legado digital.
+              </p>
+            </header>
+          </div>
+
+          <div className='relative col-span-1 lg:col-span-3 w-full h-[500px] border border-border rounded-xl flex flex-col gap-12 flex-1 p-6'>
+            <header className='pb-8 flex items-center justify-center flex-col'>
+              <h1 className='text-2xl font-semibold max-w-[60%] text-center'>
+                Páginas de Evento Profissionais
+              </h1>
+              <p className='max-w-[500px] text-muted-foreground mt-2 text-center text-base'>
+                Gere uma página pública e um QR Code para cada evento. Divulgue com aparência moderna instantaneamente.
+              </p>
+            </header>
           </div>
         </div>
       </motion.div>
