@@ -6,42 +6,22 @@ import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Button } from '@repo/ui/button';
 import { Input } from '@repo/ui/input';
 import { Label } from '@repo/ui/label';
+import { toast } from 'sonner';
 
-/**
- * Early Access CTA Section Component
- *
- * Primary conversion point - email capture form
- *
- * Features:
- * - Email, name, and type (organizer/athlete) fields
- * - Form validation
- * - Success state after submission
- * - Gradient background
- * - Prominent positioning
- *
- * Responsive:
- * - Desktop: Centered large form
- * - Mobile: Full-width form with stacked fields
- */
 export default function EarlyAccessCTA() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.4 });
 
-  // Form state
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     type: 'organizador' as 'organizador' | 'atleta',
-    city: '',
+    location: '',
   });
 
-  // Track submission status
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  /**
-   * Handle form field changes
-   */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -51,20 +31,26 @@ export default function EarlyAccessCTA() {
     });
   };
 
-  /**
-   * Handle form submission
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // TODO: Replace with actual API call
-    // For now, simulate submission delay
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
-      setIsSubmitted(true);
-      setIsSubmitting(false);
-    }, 1000);
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      const response = await res.json()
+      
+      if(response.success){
+        setIsSubmitted(true);
+      }
+    } catch (error) {
+      toast.error("Ocorreu um problema ao salvar sua inscrição")
+    } finally {
+      setIsSubmitting(false)
+    }
   };
 
   return (
@@ -228,16 +214,16 @@ export default function EarlyAccessCTA() {
                   </div>
                 </div>
 
-                {/* City Field (Optional) */}
+                {/* location Field (Optional) */}
                 <div className="space-y-2">
-                  <Label htmlFor="city" className="text-sm font-medium text-muted-foreground">
+                  <Label htmlFor="location" className="text-sm font-medium text-muted-foreground">
                     Cidade/Estado (opcional)
                   </Label>
                   <Input
-                    id="city"
-                    name="city"
+                    id="location"
+                    name="location"
                     type="text"
-                    value={formData.city}
+                    value={formData.location}
                     onChange={handleChange}
                     placeholder="Ex: São Paulo, SP"
                     className="h-12 text-base bg-background/50 border-border/50 focus:border-rankor"

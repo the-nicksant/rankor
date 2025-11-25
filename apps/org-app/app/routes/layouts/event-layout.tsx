@@ -83,6 +83,9 @@ export default function EventLayout() {
             <TabsTrigger value={buildTabValue('subscriptions')}>
               Inscrições
             </TabsTrigger>
+            <TabsTrigger value={buildTabValue('team')}>
+              Equipe
+            </TabsTrigger>
             <TabsTrigger value={buildTabValue('timeline')}>
               Cronograma
             </TabsTrigger>

@@ -12,6 +12,8 @@ import Select from "@repo/ui/select";
 import { Experience, experienceOptions } from "~/features/athlete/domain/experience";
 import { useModalsStore } from "~/shared/stores/modal-store";
 import { ModalKeys } from "~/components/shared/app-modals";
+import { createAthlete } from "~/features/athlete/domain/athlete";
+import { faker } from "@faker-js/faker";
 
 export function Loading (){
   return <Skeleton className="w-full"/>
@@ -93,14 +95,21 @@ export default function FightsPage({ params }: Route.ComponentProps) {
         </header>
 
         <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
-          <FightCard />
-          <FightCard />
-          <FightCard />
-          <FightCard />
-          <FightCard />
-          <FightCard />
-          <FightCard />
-          <FightCard />
+          {
+            Array.from({ length: 13 })
+              .map(id => ({
+                fight: {
+                  id: faker.string.uuid(),
+                  expertise: Experience.PRO,
+                  modality: 'Boxing',
+                  weightclass: 'Peso Pesado'
+                },
+                athleteA: createAthlete(),
+                athleteB: createAthlete(),
+                
+              }))
+              .map((data) => <FightCard {...data} />)
+          }
         </div>
       </section>
 

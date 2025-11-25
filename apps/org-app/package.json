@@ -22,6 +22,7 @@
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.85.3",
     "@uiw/react-md-editor": "^4.0.8",
+    "@yudiel/react-qr-scanner": "^2.4.1",
     "axios": "^1.11.0",
     "cep-promise": "^4.4.1",
     "class-variance-authority": "^0.7.1",

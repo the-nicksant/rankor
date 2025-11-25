@@ -1,8 +1,9 @@
-import crypto from 'crypto'
-import { faker } from '@faker-js/faker'
+import { fakerPT_BR as faker } from '@faker-js/faker'
+import { Experience } from './experience';
 
 export interface Athlete {
   id: string
+  avatarUrl?: string;
   firstname: string;
   lastname: string;
   nickname: string;
@@ -31,7 +32,7 @@ const athleticExpertises = [
 export const createAthlete = (): Athlete => {
   const firstname = faker.person.firstName()
   const lastname = faker.person.lastName()
-  const nickname = faker.person.firstName().slice(0, 3).toUpperCase()
+  const nickname = faker.helpers.arrayElement(['Trovão', 'Relampago', 'Marreta', 'Puro Osso', 'Pedreiro', 'Linguiça', 'Torresmo', 'Fantasma', 'Pesadelo', 'Goldenboy', 'Silverboy', 'Hancock', 'Pretin', 'Pelé', 'Superman', 'Superboy', 'Larica', 'Fumante'])
   
   return {
     id: faker.string.uuid(),
@@ -47,7 +48,7 @@ export const createAthlete = (): Athlete => {
     email: faker.internet.email({ firstName: firstname, lastName: lastname }),
     weight: faker.number.float({ min: 50, max: 120, fractionDigits: 1 }),
     height: faker.number.int({ min: 150, max: 200 }),
-    modalities: faker.helpers.arrayElements(athleticModalities, { min: 2, max: 5 }),
-    expertises: faker.helpers.arrayElements(athleticExpertises, { min: 2, max: 4 })
+    modalities: [athleticModalities[0], athleticModalities[1]],
+    expertises: [Experience.PRO, Experience.SEMIPRO]
   }
 }

@@ -5,6 +5,10 @@ import { cva, type VariantProps } from "class-variance-authority"
 const badgeVariants = cva(
   "w-fit rounded-full border border-border text-white font-medium flex items-center gap-1", {
     variants: {
+      variant: {
+        default: "",
+        secondary: ""
+      },
       size: {
         sm: "px-2 py-1 text-xs",
         md: "px-3 py-1.5 text-sm",
@@ -29,6 +33,7 @@ type Props = {
 export const Badge = ({ 
   fill = true, 
   size = "md",
+  variant = "secondary",
   icon,
   children, 
   className,
@@ -37,7 +42,7 @@ export const Badge = ({
   return (
     <div 
       className={cn(
-        badgeVariants({ size, fill, className })
+        badgeVariants({ size, fill, className, variant })
       )}
       {...props}
     >

@@ -6,10 +6,6 @@ import { ArrowRight, Sparkles, Trophy, BarChart3, Grid3x3, Zap } from 'lucide-re
 import { Button } from '@repo/ui/button';
 import Image from 'next/image';
 
-/**
- * Feature badges shown below CTAs
- * Icons + short text to highlight key platform capabilities
- */
 const featureBadges = [
   { icon: Grid3x3, text: 'Múltiplas Modalidades' },
   { icon: Trophy, text: 'Ranking Automatizado' },
@@ -17,42 +13,20 @@ const featureBadges = [
   { icon: BarChart3, text: 'Páginas Públicas' },
 ];
 
-/**
- * Hero Section Component
- *
- * The flagship section - first impression for all visitors
- *
- * Features:
- * - Split layout: Text (60%) + Visual (40%)
- * - Dual-audience messaging (primarily organizers)
- * - Animated gradient text effects
- * - Parallax scroll effects
- * - Feature badges with stagger animation
- * - Two CTA buttons (primary + secondary)
- *
- * Responsive:
- * - Desktop: Side-by-side layout
- * - Mobile: Stacked (image first, then content)
- */
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
 
-  // Track if section is in view for animations
   const isInView = useInView(heroRef, { once: true, amount: 0.3 });
 
-  // Parallax scroll effect for content
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end start'],
   });
 
-  // Transform scroll into Y-axis movement (subtle parallax)
   const contentY = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const imageY = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
-  /**
-   * Smooth scroll to target section
-   */
+
   const handleScrollTo = (targetId: string) => {
     const element = document.querySelector(targetId);
     if (element) {
@@ -65,18 +39,16 @@ export default function Hero() {
       ref={heroRef}
       className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-20 pb-16 px-4 sm:px-6 lg:px-8"
     >
-      {/* Animated Background Gradients */}
+ 
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        {/* Main radial gradient - red accent */}
+        
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-rankor/20 rounded-full blur-[120px] animate-pulse" />
 
-        {/* Secondary gradient - bottom right */}
+    
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-rose-500/10 rounded-full blur-[100px]" />
 
-        {/* Tertiary gradient - top left */}
         <div className="absolute top-1/4 left-0 w-[400px] h-[400px] bg-red-600/10 rounded-full blur-[80px]" />
 
-        {/* Subtle grid pattern overlay */}
         <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
@@ -87,11 +59,10 @@ export default function Hero() {
         />
       </div>
 
-      {/* Content Container */}
       <div className="relative z-10 max-w-7xl w-full mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-          {/* Left Column - Text Content */}
+
           <motion.div
             className="flex flex-col space-y-8 text-center lg:text-left order-2 lg:order-1"
             style={{ y: contentY }}
@@ -100,7 +71,7 @@ export default function Hero() {
             transition={{ duration: 0.8, type: 'spring', stiffness: 100 }}
           >
 
-            {/* Small badge above headline */}
+   
             <motion.div
               className="flex justify-center lg:justify-start"
               initial={{ opacity: 0, y: 20 }}
@@ -115,7 +86,7 @@ export default function Hero() {
               </div>
             </motion.div>
 
-            {/* Main Headline */}
+ 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -129,7 +100,7 @@ export default function Hero() {
               </h1>
             </motion.div>
 
-            {/* Subheadline */}
+
             <motion.p
               className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl"
               initial={{ opacity: 0, y: 20 }}
@@ -142,14 +113,14 @@ export default function Hero() {
               </span>
             </motion.p>
 
-            {/* CTA Buttons */}
+
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.5 }}
             >
-              {/* Primary CTA */}
+    
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   size="lg"
@@ -161,7 +132,7 @@ export default function Hero() {
                 </Button>
               </motion.div>
 
-              {/* Secondary CTA */}
+  
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   size="lg"
@@ -174,7 +145,7 @@ export default function Hero() {
               </motion.div>
             </motion.div>
 
-            {/* Feature Badges */}
+        
             <motion.div
               className="flex flex-wrap justify-center lg:justify-start gap-3 pt-4"
               initial={{ opacity: 0 }}
@@ -210,7 +181,7 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Right Column - Visual Element */}
+
           <motion.div
             className="relative order-1 lg:order-2"
             style={{ y: imageY }}
@@ -219,32 +190,21 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             <div className="relative aspect-square max-w-[600px] mx-auto">
-
-              {/* Main image container with glow effect */}
               <div className="relative w-full h-full rounded-3xl overflow-hidden border border-border/50 shadow-2xl">
-                {/* Glow effect behind image */}
                 <div className="absolute inset-0 bg-gradient-to-br from-rankor/30 via-rose-500/20 to-transparent blur-3xl -z-10 scale-110" />
-
-                {/* Placeholder for hero image */}
-                {/* Replace with actual dashboard screenshot or fighter image */}
-                <div className="w-full h-full bg-gradient-to-br from-card via-card to-muted flex items-center justify-center">
-                  <div className="text-center space-y-4 p-8">
-                    {/* Placeholder content - replace with real image */}
-                    <div className="w-32 h-32 mx-auto rounded-full bg-rankor/20 flex items-center justify-center">
-                      <Trophy className="w-16 h-16 text-rankor" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="h-4 bg-muted-foreground/20 rounded w-3/4 mx-auto" />
-                      <div className="h-4 bg-muted-foreground/20 rounded w-1/2 mx-auto" />
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Product Screenshot Placeholder
-                    </p>
-                  </div>
+                <div className="w-full h-full bg-gradient-to-br from-card via-card to-muted flex items-start justify-start">
+                  <Image src={'/fighters.jpg'} alt='Main Screenshot' width={500} height={300} className='object-cover h-full w-full scale-110 pointer-events-none'/>
                 </div>
               </div>
 
-              {/* Floating animated elements around the image */}
+              <Image 
+                src={'/screenshots/ranking.png'}
+                width={350}
+                height={450}
+                alt='ranking'
+                className='absolute -bottom-14 -left-10 pointer-events-none'
+              />
+
               <motion.div
                 className="absolute -top-6 -right-6 w-24 h-24 rounded-2xl bg-gradient-to-br from-rankor to-rose-500 shadow-lg shadow-rankor/30 flex items-center justify-center"
                 animate={{
@@ -261,7 +221,7 @@ export default function Hero() {
               </motion.div>
 
               <motion.div
-                className="absolute -bottom-6 -left-6 w-20 h-20 rounded-xl bg-gradient-to-br from-rose-400 to-red-600 shadow-lg flex items-center justify-center"
+                className="absolute -bottom-6 -right-6 w-20 h-20 rounded-xl bg-gradient-to-br from-rose-400 to-red-600 shadow-lg flex items-center justify-center"
                 animate={{
                   y: [0, 10, 0],
                   rotate: [0, -5, 0],

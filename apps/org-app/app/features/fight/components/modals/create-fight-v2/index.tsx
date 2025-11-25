@@ -1,165 +1,231 @@
-import React, { Activity, useState } from 'react'
-
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@repo/ui/sheet'
-import type { ModalProps } from '~/shared/types/modal'
-import { FormStepper } from './animated-stepper'
-import { File, HandFist, ListChecks, Scale } from 'lucide-react'
-import { FightDetails } from './steps/fight-details'
-import { FormProvider, useForm } from 'react-hook-form'
-import { useEvent } from '~/features/event/hooks/data'
-import { Button } from '@repo/ui/button'
-import { zodResolver } from '@hookform/resolvers/zod'
-import z from 'zod'
-import { PickFighters } from './steps/pick-fighters'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@repo/ui/sheet';
+import { Button } from '@repo/ui/button';
+import { Undo2, Redo2, Check } from 'lucide-react';
+import { FightCreationProvider, useFightCreation } from '../../../context/fight-creation-context';
+import { ModeSelector } from './mode-selector';
+import { ConfigurationStep } from './configuration-step';
+import { FightRulesStep } from './fight-rules-step';
+import { QuickModeMatchmaking } from './quick-mode-matchmaking';
+import { BatchModeMatchmaking } from './batch-mode-matchmaking';
+import { useCreateFight, useCreateBatchFights } from '../../../hooks/use-fight-queries';
+import { toast } from 'sonner';
+import type { ModalProps } from '~/shared/types/modal';
 
 type CreateFightModalPayload = {
-  eventId: string
-}
+  eventId: string;
+};
 
-export interface StepControl {
-  onNext: () => void
-  onPrev: () => void
-}
-
-const fightSchema = z.object({
-  modality: z.string().min(1, 'Modalidade é obrigatória'),
-  expertise: z.string().min(1, 'Nível é obrigatório'),
-  weightClass: z.string().min(1, 'Categoria de peso é obrigatória'),
-  athleteA: z.string().min(1, 'Atleta A é obrigatório'),
-  athleteB: z.string().min(1, 'Atleta B é obrigatório'),
-  config: z.object({
-    roundDuration: z.number().min(1, 'Duração do round deve ser maior que 0'),
-    numberOfRounds: z.number().min(1, 'Número de rounds deve ser maior que 0'),
-    restTime: z.number().min(0, 'Tempo de descanso não pode ser negativo'),
-    pointSystem: z.record(z.string(), z.number()),
-  })
-})
-
-type FightFormData = z.infer<typeof fightSchema>
-
-export default function FightCreationModal ({ onClose, payload }: ModalProps<CreateFightModalPayload>) {
-  const methods = useForm<FightFormData>({
-    resolver: zodResolver(fightSchema),
-    defaultValues: {
-      modality: '',
-      expertise: '',
-      weightClass: '',
-      athleteA: '',
-      athleteB: '',
-      config: {
-        roundDuration: 300, // 5 minutes in seconds
-        numberOfRounds: 3,
-        restTime: 60, // 1 minute in seconds
-        pointSystem: {
-          'knockdown': 10,
-          'takedown': 2,
-          'submission_attempt': 3,
-          'strike_landed': 1
-        },
-      }
-    }
-  })
-  const [currentStep, setCurrentStep] = useState(1)
-
-  const { data: event } = useEvent({ eventId: payload?.eventId })
-
-  const stepControl: StepControl = {
-    onNext: () => setCurrentStep(s => Math.min(steps.length + 1, s + 1)),
-    onPrev: () => setCurrentStep(s => Math.max(1, s - 1)),
-  }
-
-  const steps = [
-    {
-      title: 'Detalhes',
-      icon: File,
-      description: 'Informações básicas da luta',
-      step: <FightDetails event={event!} step={stepControl}/>,
-    },
-    {
-      title: 'Lutadores',
-      icon: HandFist,
-      description: 'Selecione os melhores competidores',
-      step: <PickFighters event={event!} step={stepControl} />
-    },
-    {
-      title: 'Regras',
-      icon: Scale,
-      description: 'Defina as regras da luta',
-      step: <div></div>
-    },
-    {
-      title: 'Revisão',
-      icon: ListChecks,
-      description: 'Confirme os dados da luta',
-      step: <div></div>
-    },
-  ] 
-  
+export default function FightCreationModal({ onClose, payload }: ModalProps<CreateFightModalPayload>) {
   return (
     <Sheet onOpenChange={() => onClose()} open>
-      <SheetContent side='bottom' className='h-screen flex flex-col'>
-        <SheetHeader className='shrink-0'>
-          <SheetTitle>Criar luta</SheetTitle>
-          <SheetDescription>
-            Defina os detalhes da luta e selecione os atletas que irão competir.
-          </SheetDescription>
-        </SheetHeader>
-        <div className='h-[calc(100vh-82px)] w-full overflow-y-auto'>
-          <Activity mode={event ? 'visible' : 'hidden'}>
-            <section className='gap-8 h-full flex flex-row items-center'>
-              {/* <div className='py-b w-full shrink-0 px-6'>
-                <FormStepper 
-                  currentStep={currentStep}
-                  steps={steps}
-                />
-              </div> */}
-
-              <FormProvider {...methods}>
-                <div className='w-full h-full flex-1 shrink-0 flex flex-col px-6 pb-6'>
-                  {
-                    steps.map((step, index) => (
-                      <Activity key={index} mode={(currentStep - 1) === index ? 'visible' : 'hidden'}>
-                        {step.step}
-                      </Activity>
-                    ))
-                  }
-                </div>
-              </FormProvider>
-            </section>
-          </Activity>
-        </div>
-
+      <SheetContent side="bottom" className="h-screen flex flex-col">
+        <FightCreationProvider>
+          <FightCreationContent onClose={onClose} />
+        </FightCreationProvider>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
 
-type StepFooterProps = {
-  showBack?: boolean
-  nextProps?: {
-    disabled?: boolean
-    loading?: boolean
-    children?: boolean
-  }
-  onNext?: () => void
-  onBack?: () => void
-}
+function FightCreationContent({ onClose }: { onClose: () => void }) {
+  const { state, dispatch, canUndo, canRedo } = useFightCreation();
+  const createFightMutation = useCreateFight();
+  const createBatchFightsMutation = useCreateBatchFights();
 
+  const steps = state.mode === 'quick'
+    ? ['Modo', 'Configuração', 'Regras', 'Matchmaking']
+    : ['Modo', 'Configuração', 'Regras', 'Lutas'];
 
-export const StepFooter = ({ nextProps, showBack, onNext, onBack}: StepFooterProps) => {
-  return (
-    <div className='w-full flex items-center justify-end gap-2'>
-      {
-        showBack && 
-          <Button variant='secondary' onClick={() => onBack?.()}>
-            Voltar
-          </Button>
+  const isConfigValid =
+    state.configuration.modalityId &&
+    state.configuration.experienceLevel &&
+    state.configuration.weightClass &&
+    state.availableAthletes.length >= 2;
+
+  const canProceed = () => {
+    if (state.currentStep === 0) return true;
+    if (state.currentStep === 1) return isConfigValid;
+    if (state.currentStep === 2) return true;
+    if (state.currentStep === 3) {
+      if (state.mode === 'quick') {
+        return state.quickMode.fighterA && state.quickMode.fighterB;
+      } else {
+        return state.batchMode.matchups.length > 0 &&
+          state.batchMode.matchups.every(m => m.fighterA && m.fighterB);
       }
-      <Button
-        {...nextProps}
-        children={nextProps?.children || 'Próximo'}
-        onClick={() => onNext?.()}
-      />
-    </div>
-  )
+    }
+    return false;
+  };
+
+  const handleNext = () => {
+    if (state.currentStep < steps.length - 1) {
+      dispatch({ type: 'NEXT_STEP' });
+    }
+  };
+
+  const handleBack = () => {
+    if (state.currentStep > 0) {
+      dispatch({ type: 'PREV_STEP' });
+    }
+  };
+
+  const handleCreate = () => {
+    if (state.mode === 'quick') {
+      createFightMutation.mutate(
+        {
+          fighterA: state.quickMode.fighterA,
+          fighterB: state.quickMode.fighterB,
+          configuration: state.configuration,
+        },
+        {
+          onSuccess: () => {
+            toast.success('Luta criada com sucesso!');
+            dispatch({ type: 'RESET' });
+            onClose();
+          },
+          onError: () => {
+            toast.error('Erro ao criar luta');
+          },
+        }
+      );
+    } else {
+      createBatchFightsMutation.mutate(
+        state.batchMode.matchups.map((m) => ({
+          fighterA: m.fighterA,
+          fighterB: m.fighterB,
+          configuration: state.configuration,
+        })),
+        {
+          onSuccess: () => {
+            toast.success(`${state.batchMode.matchups.length} lutas criadas com sucesso!`);
+            dispatch({ type: 'RESET' });
+            onClose();
+          },
+          onError: () => {
+            toast.error('Erro ao criar lutas');
+          },
+        }
+      );
+    }
+  };
+
+  return (
+    <>
+      <SheetHeader className="shrink-0">
+        <div className="flex items-center justify-between">
+          <div>
+            <SheetTitle>Criar Luta{state.mode === 'batch' ? 's' : ''}</SheetTitle>
+            <SheetDescription>
+              {state.mode === 'quick'
+                ? 'Crie uma luta rapidamente'
+                : 'Crie várias lutas de uma vez'}
+            </SheetDescription>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => dispatch({ type: 'UNDO' })}
+              disabled={!canUndo}
+              variant="ghost"
+              size="icon"
+              title="Desfazer (Ctrl+Z)"
+            >
+              <Undo2 className="w-4 h-4" />
+            </Button>
+
+            <Button
+              onClick={() => dispatch({ type: 'REDO' })}
+              disabled={!canRedo}
+              variant="ghost"
+              size="icon"
+              title="Refazer (Ctrl+Y)"
+            >
+              <Redo2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      </SheetHeader>
+
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="mb-8 flex items-center justify-center gap-2 flex-wrap">
+          {steps.map((step, index) => (
+            <div key={step} className="flex items-center">
+              <div
+                className={`
+                  flex items-center gap-2 px-4 py-2 rounded-lg transition-all
+                  ${index === state.currentStep ? 'bg-rankor/10 text-rankor' : 'text-muted-foreground'}
+                  ${index < state.currentStep ? 'text-foreground' : ''}
+                `}
+              >
+                <div
+                  className={`
+                    w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold
+                    ${index === state.currentStep ? 'bg-rankor text-white' : 'bg-muted'}
+                    ${index < state.currentStep ? 'bg-green-500 text-white' : ''}
+                  `}
+                >
+                  {index < state.currentStep ? <Check className="w-4 h-4" /> : index + 1}
+                </div>
+                <span className="text-sm font-medium hidden sm:inline">{step}</span>
+              </div>
+
+              {index < steps.length - 1 && (
+                <div className="w-8 h-px bg-border mx-2 hidden sm:block" />
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="min-h-[400px] max-w-7xl mx-auto">
+          {state.currentStep === 0 && <ModeSelector />}
+          {state.currentStep === 1 && <ConfigurationStep />}
+          {state.currentStep === 2 && <FightRulesStep />}
+          {state.currentStep === 3 && (
+            <>
+              {state.mode === 'quick' ? (
+                <QuickModeMatchmaking />
+              ) : (
+                <BatchModeMatchmaking />
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="border-t px-6 py-4 flex items-center justify-between bg-muted/30 shrink-0">
+        <Button
+          onClick={handleBack}
+          variant="ghost"
+          disabled={state.currentStep === 0}
+        >
+          Voltar
+        </Button>
+
+        <div className="flex gap-2">
+          <Button onClick={onClose} variant="outline">
+            Cancelar
+          </Button>
+
+          {state.currentStep < steps.length - 1 ? (
+            <Button onClick={handleNext} disabled={!canProceed()}>
+              Próximo
+            </Button>
+          ) : (
+            <Button
+              onClick={handleCreate}
+              disabled={
+                !canProceed() ||
+                createFightMutation.isPending ||
+                createBatchFightsMutation.isPending
+              }
+            >
+              {createFightMutation.isPending || createBatchFightsMutation.isPending
+                ? 'Criando...'
+                : `Criar ${state.mode === 'batch' ? `${state.batchMode.matchups.length} Lutas` : 'Luta'}`}
+            </Button>
+          )}
+        </div>
+      </div>
+    </>
+  );
 }

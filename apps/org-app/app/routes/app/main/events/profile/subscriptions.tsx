@@ -6,14 +6,15 @@ import { motion } from "motion/react";
 import { useEvent, useSubscriptions } from "~/features/event/hooks/data";
 import { Input } from "@repo/ui/input";
 import { DataTable } from "@repo/ui/data-table";
-import { Check, CheckCheckIcon, CheckCircle, Clock, Copy, Search, X, XCircle } from "lucide-react";
+import { Check, CheckCheckIcon, CheckCircle, Clock, Copy, Search, User, X, XCircle } from "lucide-react";
 import Select from "@repo/ui/select";
 import { Experience, experienceOptions } from "~/features/athlete/domain/experience";
 import { useModalsStore } from "~/shared/stores/modal-store";
-import { Avatar, AvatarFallback } from "@repo/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import SpotlightCard from "~/components/shared/spotlight-card";
 import { Button } from "@repo/ui/button";
 import { useState } from "react";
+import { faker } from "@faker-js/faker";
 
 export function Loading (){
   return <Skeleton className="w-full"/>
@@ -171,7 +172,8 @@ export default function SubscriptionsPage({ params }: Route.ComponentProps) {
               cell: ({ row }) => (
                 <div className="flex items-center gap-4">
                   <Avatar className="size-12">
-                    <AvatarFallback>{row.getValue("name")}</AvatarFallback>
+                    <AvatarImage src={faker.image.personPortrait({ sex: 'male' })}/>
+                    <AvatarFallback><User /></AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
                     <span className="font-medium">{row.getValue("name")}</span>

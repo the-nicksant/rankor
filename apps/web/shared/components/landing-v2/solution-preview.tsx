@@ -3,80 +3,49 @@
 import React, { useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@repo/ui/button';
+import Image from 'next/image';
 
-/**
- * Product screenshots/mockups to showcase in carousel
- * Each item has title, description, and placeholder for image
- */
 const screenshots = [
   {
     title: 'Criação de Eventos Intuitiva',
     description: 'Configure seu evento em minutos com nosso wizard guiado',
     imageAlt: 'Event Creation Wizard Screenshot',
+    imageSrc: '/screenshots/event-creation.png'
+  },
+  {
+    title: 'Inscrições fáceis de acompanhar',
+    description: 'Liste e gerencie os status das suas inscrições',
+    imageAlt: 'Athlete Profile Screenshot',
+    imageSrc: '/screenshots/subscriptions.png'
   },
   {
     title: 'Gestão de Cards de Luta',
     description: 'Arraste e solte para organizar lutas, visualize comparações de atletas',
     imageAlt: 'Fight Card Management Screenshot',
-  },
-  {
-    title: 'Página Pública do Evento',
-    description: 'Cada evento ganha uma página profissional para compartilhar',
-    imageAlt: 'Public Event Page Screenshot',
-  },
-  {
-    title: 'Perfil de Atleta com Ranking',
-    description: 'Histórico completo, ranking atualizado e legado digital',
-    imageAlt: 'Athlete Profile Screenshot',
+    imageSrc: '/screenshots/fight-creation.png'
   },
   {
     title: 'Dashboard com Métricas',
-    description: 'Acompanhe inscrições, lutas e engajamento em tempo real',
-    imageAlt: 'Dashboard Screenshot',
+    description: 'Acompanhe os resultados das lutas, check-ins e engajamento em tempo real',
+    imageAlt: 'Dashboard',
+    imageSrc: '/screenshots/live-dashboard.png'
   },
 ];
 
-/**
- * Solution Preview Section Component
- *
- * Shows the product in action with screenshot carousel
- *
- * Features:
- * - Image carousel with prev/next controls
- * - Dot navigation
- * - Auto-play support (commented out for now)
- * - Smooth transitions with AnimatePresence
- * - Browser mockup frame
- *
- * Responsive:
- * - Desktop: Large centered carousel
- * - Mobile: Full-width carousel with touch support
- */
 export default function SolutionPreview() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
 
-  // Track current screenshot index
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  /**
-   * Navigate to next screenshot
-   */
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % screenshots.length);
   };
 
-  /**
-   * Navigate to previous screenshot
-   */
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + screenshots.length) % screenshots.length);
   };
 
-  /**
-   * Navigate to specific screenshot by index
-   */
   const handleDotClick = (index: number) => {
     setCurrentIndex(index);
   };
@@ -129,7 +98,7 @@ export default function SolutionPreview() {
               </div>
               <div className="flex-1 ml-4 h-6 bg-background/50 rounded px-3 flex items-center">
                 <span className="text-xs text-muted-foreground">
-                  rankor.app/{currentScreenshot.imageAlt.toLowerCase().replace(/ /g, '-')}
+                  rankor.app/{currentScreenshot?.imageAlt.toLowerCase().replace(/ /g, '-')}
                 </span>
               </div>
             </div>
@@ -145,23 +114,13 @@ export default function SolutionPreview() {
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {/* Placeholder for actual screenshot */}
-                  {/* Replace this div with <Image> component when you have real screenshots */}
-                  <div className="w-full h-full bg-gradient-to-br from-card via-muted/30 to-card flex items-center justify-center p-8">
-                    <div className="text-center space-y-4">
-                      <div className="w-24 h-24 mx-auto rounded-2xl bg-rankor/20 flex items-center justify-center">
-                        <span className="text-4xl font-bold text-rankor">
-                          {currentIndex + 1}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-foreground">
-                        {currentScreenshot.title}
-                      </h3>
-                      <p className="text-muted-foreground max-w-md">
-                        Screenshot Placeholder - {currentScreenshot.imageAlt}
-                      </p>
-                    </div>
-                  </div>
+                  <Image
+                    alt={currentScreenshot?.imageAlt || ""}
+                    src={currentScreenshot?.imageSrc || ""}
+                    width={1000}
+                    height={800}
+                    className='w-full aspect-video'
+                  />
                 </motion.div>
               </AnimatePresence>
 
@@ -195,10 +154,10 @@ export default function SolutionPreview() {
                   className="text-center"
                 >
                   <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {currentScreenshot.title}
+                    {currentScreenshot?.title}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {currentScreenshot.description}
+                    {currentScreenshot?.description}
                   </p>
                 </motion.div>
               </AnimatePresence>

@@ -38,7 +38,7 @@ export default function Page() {
       firstname: "Nicolas",
       nickname: 'Superman',
       lastname: 'Santos',
-      birthdate: new Date(),
+      birthdate: new Date('2003-03-17'),
       country: "BR",
       email: 'nicolasalmeidasantos@gmail.com',
       phone: '(11) 973727800',

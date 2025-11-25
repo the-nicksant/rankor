@@ -2,6 +2,8 @@ import { apiClient } from "~/lib/http/http-client";
 import type { Event } from "~/features/event/models/event";
 import type { CreateEventFormValues, ProfileConfigFormValues, SubscriptionConfigFormValues } from "~/features/event/schemas/event-forms";
 import type { Paginated } from "~/shared/types/protocol/paginated";
+import { fakerPT_BR } from "@faker-js/faker";
+import { Experience } from "~/features/athlete/domain/experience";
 
 export namespace EventUseCases {
   export const createEvent = async (values: CreateEventFormValues) => {
@@ -61,7 +63,7 @@ export namespace EventUseCases {
   }
 
   export const getSubscriptions = async (eventId: string, filters: Requests.GetSubscriptionsFilter): Promise<Paginated<any>> => {
-    const res = await apiClient.get(`/v1/event/${eventId}/subcriptions`, { params: filters });
+    const res = await apiClient.get(`/v1/event/${eventId}/subscriptions`, { params: filters });
 
     return res.data
   }

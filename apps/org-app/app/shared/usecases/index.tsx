@@ -1,5 +1,6 @@
 import { apiClient } from "~/lib/http/http-client"
 import type { Modality } from "../domain/models/modality"
+import type { Experience } from "~/features/athlete/domain/experience"
 
 
 export namespace SharedUseCases {
@@ -9,7 +10,7 @@ export namespace SharedUseCases {
     return res.data
   }
 
-  export const getExpertises = async () => {
+  export const getExpertises = async (): Promise<{ id: Experience, name: string }[]> => {
     const res = await apiClient.get('/v1/expertises')
     return res.data
   }

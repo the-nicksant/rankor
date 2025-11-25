@@ -9,6 +9,18 @@ export const useModalities = () => {
       return await SharedUseCases.getModalities()
     }
   })
+}
+
+export const useExpertises = () => {
+   return useQuery({
+    queryKey: ['fetch-expertises'],
+    initialData: [],
+    queryFn: async () => {
+      return await SharedUseCases.getExpertises()
+    },
+    select: (data) => data.map(d => ({ label: d.name, value: d.id })) 
+  })
+}
   // return { data: [
   //   {
   //     "title": "Boxe",
@@ -60,4 +72,3 @@ export const useModalities = () => {
   //   }
   // ]}
 
-} 
