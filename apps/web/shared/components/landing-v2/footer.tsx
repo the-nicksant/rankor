@@ -30,10 +30,7 @@ const footerSections = [
   {
     title: 'Empresa',
     links: [
-      { name: 'Sobre Nós', href: '#' },
-      { name: 'Contato', href: 'https://wa.me/551973727800' },
-      { name: 'Privacidade', href: '#' },
-      { name: 'Termos de Uso', href: '#' },
+      { name: 'Contato', href: 'https://wa.me/5511973727800' }
     ],
   },
 ];
